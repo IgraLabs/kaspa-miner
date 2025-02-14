@@ -32,7 +32,10 @@ pub struct Opt {
     #[clap(long, display_order = 4)]
     /// Use testnet instead of mainnet [default: false]
     testnet: bool,
-    #[clap(short = 't', long = "threads", display_order = 5)]
+    #[clap(long, display_order = 5)]
+    /// Use testnet instead of mainnet [default: false]
+    devnet: bool,
+    #[clap(short = 't', long = "threads", display_order = 6)]
     /// Amount of miner threads to launch [default: number of logical cpus]
     pub num_threads: Option<u16>,
     #[clap(long = "mine-when-not-synced", display_order = 8)]
@@ -86,7 +89,11 @@ impl Opt {
     }
 
     fn port(&mut self) -> u16 {
-        *self.port.get_or_insert(if self.testnet { 16210 } else { 16110 })
+        *self.port.get_or_insert(
+            if self.testnet { 16210 }
+            else if self.devnet { 16610 }
+            else { 16110 }
+        )
     }
 
     pub fn log_level(&self) -> LevelFilter {
